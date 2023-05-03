@@ -1,6 +1,7 @@
 package com.shakiv.husain.meditationapp.utils
 
 import com.shakiv.husain.meditationapp.R
+import com.shakiv.husain.meditationapp.data.model.BottomMenuContent
 import com.shakiv.husain.meditationapp.data.model.Feature
 import com.shakiv.husain.meditationapp.ui.theme.Beige1
 import com.shakiv.husain.meditationapp.ui.theme.Beige2
@@ -51,6 +52,17 @@ object Data {
                 Beige2,
                 Beige3
             )
+        )
+    }
+
+    fun getBottomMenuList(): List<BottomMenuContent> {
+
+        return listOf(
+            BottomMenuContent(title = "Home", R.drawable.ic_home),
+            BottomMenuContent(title = "Meditate", R.drawable.ic_bubble),
+            BottomMenuContent(title = "Sleep", R.drawable.ic_moon),
+            BottomMenuContent(title = "Music", R.drawable.ic_music),
+            BottomMenuContent(title = "Profile", R.drawable.ic_profile)
         )
     }
 }

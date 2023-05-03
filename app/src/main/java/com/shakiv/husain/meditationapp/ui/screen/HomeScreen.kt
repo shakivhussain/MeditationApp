@@ -8,12 +8,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -44,17 +46,18 @@ import androidx.compose.ui.unit.sp
 import com.shakiv.husain.meditationapp.R
 import com.shakiv.husain.meditationapp.data.model.BottomMenuContent
 import com.shakiv.husain.meditationapp.data.model.Feature
+import com.shakiv.husain.meditationapp.ui.theme.AquaBlue
 import com.shakiv.husain.meditationapp.ui.theme.ButtonBlue
 import com.shakiv.husain.meditationapp.ui.theme.DarkerButtonBlue
 import com.shakiv.husain.meditationapp.ui.theme.DeepBlue
 import com.shakiv.husain.meditationapp.ui.theme.LightRed
 import com.shakiv.husain.meditationapp.ui.theme.TextWhite
+import com.shakiv.husain.meditationapp.utils.Data.getBottomMenuList
 import com.shakiv.husain.meditationapp.utils.Data.getChipList
 import com.shakiv.husain.meditationapp.utils.Data.getFeaturedList
 import com.shakiv.husain.meditationapp.utils.standardQuadFromTo
 
 @Preview(showBackground = true)
-
 @Composable fun HomeScreen() {
 
     var chipList by remember {
@@ -77,10 +80,83 @@ import com.shakiv.husain.meditationapp.utils.standardQuadFromTo
             CurrentMeditation()
             FeaturedSection(featureList = getFeaturedList())
 
+            BottomMenu(items = getBottomMenuList())
+
         }
     }
 }
 
+
+@Composable
+fun BottomMenu(
+    items: List<BottomMenuContent>,
+    modifier: Modifier = Modifier,
+    activeHighlightColor: Color = ButtonBlue,
+    activeTextColor: Color = Color.White,
+    inactiveTextColor: Color = AquaBlue,
+    initialSelectedItemIndex: Int = 0
+) {
+    var selectedItemIndex by remember {
+        mutableStateOf(initialSelectedItemIndex)
+    }
+    Row(
+        horizontalArrangement = Arrangement.SpaceAround,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .fillMaxWidth()
+            .background(DeepBlue)
+            .padding(15.dp)
+    ) {
+        items.forEachIndexed { index, item ->
+            BottomMenuItem(
+                item = item,
+                isSelected = index == selectedItemIndex,
+                activeHighlightColor = activeHighlightColor,
+                activeTextColor = activeTextColor,
+                inactiveTextColor = inactiveTextColor
+            ) {
+                selectedItemIndex = index
+            }
+        }
+    }
+}
+
+@Composable
+fun BottomMenuItem(
+    item: BottomMenuContent,
+    isSelected: Boolean = false,
+    activeHighlightColor: Color = ButtonBlue,
+    activeTextColor: Color = Color.White,
+    inactiveTextColor: Color = AquaBlue,
+    onItemClick: () -> Unit
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.clickable {
+            onItemClick()
+        }
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .clip(RoundedCornerShape(10.dp))
+                .background(if (isSelected) activeHighlightColor else Color.Transparent)
+                .padding(10.dp)
+        ) {
+            Icon(
+                painter = painterResource(id = item.iconId),
+                contentDescription = item.title,
+                tint = if (isSelected) activeTextColor else inactiveTextColor,
+                modifier = Modifier.size(20.dp)
+            )
+        }
+        Text(
+            text = item.title,
+            color = if(isSelected) activeTextColor else inactiveTextColor
+        )
+    }
+}
 
 @Composable fun GreetingSection(name: String = "Shakiv Husain") {
 
@@ -187,7 +263,11 @@ import com.shakiv.husain.meditationapp.utils.standardQuadFromTo
 @Composable
 fun FeaturedSection(featureList: List<Feature>) {
 
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.84f)
+    ) {
         Text(
             text = "Features",
             style = MaterialTheme.typography.headlineMedium,
@@ -196,7 +276,7 @@ fun FeaturedSection(featureList: List<Feature>) {
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
-            contentPadding = PaddingValues(start = 7.5.dp, end = 7.5.dp, bottom = 100.dp),
+            contentPadding = PaddingValues(start = 7.5.dp, end = 7.5.dp, bottom = 10.dp),
             modifier = Modifier.fillMaxHeight()
         ) {
             items(featureList.size) { index ->
